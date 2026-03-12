@@ -1,23 +1,20 @@
-using Microsoft.AspNetCore.Mvc;
+using AzureQuizLab.Options;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Options;
 
 namespace AzureQuizLab.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly IConfiguration configuration;
+        public bool MaintenanceMode { get; set; }
 
-        public string MaintenanceMode { get; set; }
-
-        public IndexModel(IConfiguration configuration)
+        public IndexModel(IOptions<MaintenanceOptions> maintenanceOptions)
         {
-            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            MaintenanceMode = string.Empty;
+            MaintenanceMode = maintenanceOptions.Value.Enabled;
         }
 
         public void OnGet()
         {
-           MaintenanceMode = this.configuration.GetValue<string>("MaintenanceMode")!;
         }
     }
 }

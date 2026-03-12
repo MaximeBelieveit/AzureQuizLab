@@ -1,10 +1,11 @@
+using AzureQuizLab.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-//builder.Configuration
-//    .AddEnvironmentVariables();
+builder.Services.Configure<MaintenanceOptions>(builder.Configuration.GetSection(MaintenanceOptions.SectionName));
 
 var app = builder.Build();
 
