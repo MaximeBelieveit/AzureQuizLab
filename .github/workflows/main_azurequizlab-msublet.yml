@@ -49,7 +49,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'azurequizlab-maxime-api-dev'
+          app-name: 'AzureQuizLab-msublet'
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FFEC0C096A89410B8A9CF20631E13FFF }}
