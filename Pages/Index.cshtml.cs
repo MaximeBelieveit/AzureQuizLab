@@ -9,18 +9,23 @@ namespace AzureQuizLab.Pages
     public class IndexModel : PageModel
     {
         private readonly QuizDbContext context;
+        private readonly ILogger logger;
 
         public bool MaintenanceMode { get; set; }
 
         public int QuizCount { get; set; }
         public int QuestionCount { get; set; }
 
-        public IndexModel(QuizDbContext context, IOptionsMonitor<MaintenanceOptions> maintenanceOptions)
+        public IndexModel(
+            QuizDbContext context,
+            ILogger<IndexModel> logger,
+            IOptionsMonitor<MaintenanceOptions> maintenanceOptions)
         {
             MaintenanceMode = maintenanceOptions.CurrentValue.Enabled;
 
             maintenanceOptions.OnChange(HandleOptionChange);
             this.context = context;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         private void HandleOptionChange(MaintenanceOptions options, string? arg2)
@@ -30,8 +35,13 @@ namespace AzureQuizLab.Pages
 
         public void OnGet()
         {
+            this.logger.LogInformation("Chargement de la page d'accueil à {Time}", DateTime.UtcNow);
+
             QuizCount = this.context.Quizzes.Count();
             QuestionCount = this.context.Questions.Count();
+
+            this.logger.LogInformation("Nombre de quiz : {QuizCount}", QuizCount);
+            this.logger.LogInformation("Nombre de questions : {QuestionCount}", QuestionCount);
         }
     }
 }
