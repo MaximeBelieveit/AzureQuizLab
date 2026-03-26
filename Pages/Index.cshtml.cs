@@ -21,11 +21,12 @@ namespace AzureQuizLab.Pages
             ILogger<IndexModel> logger,
             IOptionsMonitor<MaintenanceOptions> maintenanceOptions)
         {
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
             MaintenanceMode = maintenanceOptions.CurrentValue.Enabled;
 
             maintenanceOptions.OnChange(HandleOptionChange);
-            this.context = context;
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         private void HandleOptionChange(MaintenanceOptions options, string? arg2)
