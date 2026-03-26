@@ -8,9 +8,17 @@ namespace AzureQuizLab.Pages
     {
         public bool MaintenanceMode { get; set; }
 
-        public IndexModel(IOptions<MaintenanceOptions> maintenanceOptions)
+        public IndexModel(IOptionsMonitor<MaintenanceOptions> maintenanceOptions)
         {
-            MaintenanceMode = maintenanceOptions.Value.Enabled;
+            
+            MaintenanceMode = maintenanceOptions.CurrentValue.Enabled;
+
+            maintenanceOptions.OnChange(HandleOptionChange);
+        }
+
+        private void HandleOptionChange(MaintenanceOptions options, string? arg2)
+        {
+            MaintenanceMode = options.Enabled;
         }
 
         public void OnGet()
