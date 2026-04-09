@@ -1,12 +1,18 @@
 @description('Localisation des ressources')
 param location string = resourceGroup().location
+
+@allowed([
+  'Development'
+  'PreProduction'
+  'Production'
+])
 param environment string = 'Development'
 
-@description('Nom du service plan')
-param appServicePlanName string = 'asp-${uniqueString(resourceGroup().id)}'
+@description('Nom de l\'application')
+param appName string = 'azurequizlab'
 
 @description('Nom du service plan')
-param appName string = 'azurequizlab'
+param appServicePlanName string = 'asp-${appName}'
 
 @description('SKU du service plan')
 @allowed([
@@ -32,17 +38,38 @@ param linuxFxVersion string = 'DOTNETCORE|10.0'
 @allowed([1])
 param instanceCount int = 1
 
+@description('Tags à appliquer sur les ressources')
 param tags object = {
   env: 'formation'
   owner: 'msublet'
 }
 
+@description('SQL Server admin password')
+@minLength(8)
+param sqlAdminPassword string
+
 // Naming convention
-var webAppName = '${appName}-api-${environment}'
+var webAppName = '${appName}-${environment}'
+var appServicePlanNameFinalName = '${appServicePlanName}-${environment}'
+var sqlDatabaseName = '${appName}-db-${environment}'
+var sqlAdminUsername = 'dbserveradmin'
+
+// Storage module (SQL Server and Database)
+module storage 'storage.bicep' = {
+  name: 'storage-deployment'
+  params: {
+    location: location
+    tags: tags
+    sqlAdminUsername: sqlAdminUsername
+    sqlAdminPassword: sqlAdminPassword
+    sqlDatabaseName: sqlDatabaseName
+    sqlEdition: 'Basic'
+  }
+}
 
 // App Service Plan
 resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
-  name: appServicePlanName
+  name: appServicePlanNameFinalName
   location: location
   kind: 'linux'
   properties: {
@@ -78,6 +105,11 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
           name: 'ASPNETCORE_ENVIRONMENT'
           value: environment
         }
+        {
+          name: 'ConnectionStrings__DefaultConnection'
+          value: 'Server=tcp:${storage.outputs.sqlServerFullyQualifiedDomainName},1433;Initial Catalog=${storage.outputs.sqlDatabaseName};Persist Security Info=False;User ID=${sqlAdminUsername};Password=${sqlAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+
+        }
       ]
     }
     httpsOnly: true
@@ -86,7 +118,10 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
   }
 }
 
-// Web App diagnostic settings
+// Outputs
 output webAppUrl string = 'https://${webApp.properties.defaultHostName}'
 output webAppName string = webApp.name
 output appServicePlanName string = appServicePlan.name
+output sqlServerName string = storage.outputs.sqlServerName
+output sqlServerFqdn string = storage.outputs.sqlServerFullyQualifiedDomainName
+output sqlDatabaseName string = storage.outputs.sqlDatabaseName

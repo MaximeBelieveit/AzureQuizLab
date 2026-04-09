@@ -3,19 +3,19 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "environment": {
-      "value": "dev"
+      "value": "Development"
     },
     "appServicePlanName": {
-      "value": "ASP-azurequizlab-maxime"
+      "value": "ASP-AzureQuizLab-msublet"
     },
     "appName": {
-      "value": "azurequizlab-maxime"
+      "value": "AzureQuizLab-msublet"
     },
     "skuName": {
       "value": "F1"
     },
     "linuxFxVersion": {
-      "value": "DOTNET|10.0"
+      "value": "DOTNETCORE|10.0"
     },
     "instanceCount": {
       "value": 1
