@@ -67,6 +67,8 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-08-01' = {
   properties: {
     collation: 'SQL_Latin1_General_CP1_CI_AS'
     maxSizeBytes: sqlEdition == 'Basic' ? 2147483648 : sqlEdition == 'Standard' ? 268435456000 : 1099511627776
+
+    zoneRedundant: false
   }
 }
 

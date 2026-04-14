@@ -56,7 +56,7 @@ var sqlAdminUsername = 'dbserveradmin'
 module storage 'storage.bicep' = {
   name: 'storage-deployment'
   params: {
-    location: location
+    location: 'francecentral' //location
     tags: tags
     sqlAdminUsername: sqlAdminUsername
     sqlAdminPassword: sqlAdminPassword
@@ -69,7 +69,7 @@ module storage 'storage.bicep' = {
 module webApp 'webApp.bicep' = {
   name: 'webApp-deployment'
   params: {
-    location: 'francecentral'
+    location: location
     environment: environment
     appName: appName
     appServicePlanName: appServicePlanName
