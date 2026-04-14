@@ -85,6 +85,10 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
       alwaysOn: skuName != 'F1'
       http20Enabled: false
       minTlsVersion: '1.2'
+      httpLoggingEnabled: true
+      detailedErrorLoggingEnabled: true // Optional: Enable only in dev/test
+      requestTracingEnabled: true
+      logsDirectorySizeLimit: 35 // MB limit for local logs
       appSettings: [
         {
           name: 'ASPNETCORE_ENVIRONMENT'
