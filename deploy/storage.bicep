@@ -1,6 +1,7 @@
 @description('Localisation des ressources')
 param location string = resourceGroup().location
 
+
 @description('Tags à appliquer sur les ressources')
 param tags object = {
   env: 'formation'

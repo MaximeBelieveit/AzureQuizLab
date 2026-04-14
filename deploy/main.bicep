@@ -1,6 +1,5 @@
 @description('Localisation des ressources')
 param location string = resourceGroup().location
-
 @allowed([
   'Development'
   'PreProduction'
@@ -35,6 +34,7 @@ param skuName string = 'F1'
   'DOTNETCORE|8.0'
 ])
 param linuxFxVersion string = 'DOTNETCORE|10.0'
+
 @allowed([1])
 param instanceCount int = 1
 
@@ -49,8 +49,6 @@ param tags object = {
 param sqlAdminPassword string
 
 // Naming convention
-var webAppName = '${appName}-${environment}'
-var appServicePlanNameFinalName = '${appServicePlanName}-${environment}'
 var sqlDatabaseName = '${appName}-db-${environment}'
 var sqlAdminUsername = 'dbserveradmin'
 
@@ -67,61 +65,26 @@ module storage 'storage.bicep' = {
   }
 }
 
-// App Service Plan
-resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
-  name: appServicePlanNameFinalName
-  location: location
-  kind: 'linux'
-  properties: {
-    reserved: true
-  }
-  sku: {
-    name: skuName
-    capacity: instanceCount
-  }
-  tags: tags
-}
-
-// Web App
-resource webApp 'Microsoft.Web/sites@2024-11-01' = {
-  name: webAppName
-  location: location
-  tags: tags
-  kind: 'app,linux'
-  identity: {
-    type: 'SystemAssigned'
-  }
-  properties: {
-    enabled: true
-    serverFarmId: appServicePlan.id
-    reserved: true
-    siteConfig: {
-      linuxFxVersion: linuxFxVersion
-      alwaysOn: skuName != 'F1'
-      http20Enabled: false
-      minTlsVersion: '1.2'
-      appSettings: [
-        {
-          name: 'ASPNETCORE_ENVIRONMENT'
-          value: environment
-        }
-        {
-          name: 'ConnectionStrings__DefaultConnection'
-          value: 'Server=tcp:${storage.outputs.sqlServerFullyQualifiedDomainName},1433;Initial Catalog=${storage.outputs.sqlDatabaseName};Persist Security Info=False;User ID=${sqlAdminUsername};Password=${sqlAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
-
-        }
-      ]
-    }
-    httpsOnly: true
-    clientCertMode: 'Required'
-    ipMode: 'IPv4'
+// Web App module
+module webApp 'webApp.bicep' = {
+  name: 'webApp-deployment'
+  params: {
+    location: 'francecentral'
+    environment: environment
+    appName: appName
+    appServicePlanName: appServicePlanName
+    skuName: skuName
+    linuxFxVersion: linuxFxVersion
+    instanceCount: instanceCount
+    tags: tags
+    connectionString: 'Server=tcp:${storage.outputs.sqlServerFullyQualifiedDomainName},1433;Initial Catalog=${storage.outputs.sqlDatabaseName};Persist Security Info=False;User ID=${sqlAdminUsername};Password=${sqlAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
   }
 }
 
 // Outputs
-output webAppUrl string = 'https://${webApp.properties.defaultHostName}'
-output webAppName string = webApp.name
-output appServicePlanName string = appServicePlan.name
+output webAppUrl string = webApp.outputs.webAppUrl
+output webAppName string = webApp.outputs.webAppName
+output appServicePlanName string = webApp.outputs.appServicePlanName
 output sqlServerName string = storage.outputs.sqlServerName
 output sqlServerFqdn string = storage.outputs.sqlServerFullyQualifiedDomainName
 output sqlDatabaseName string = storage.outputs.sqlDatabaseName
