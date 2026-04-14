@@ -1,7 +1,6 @@
 @description('Localisation des ressources')
 param location string = resourceGroup().location
 
-
 @description('Tags à appliquer sur les ressources')
 param tags object = {
   env: 'formation'
@@ -27,6 +26,13 @@ param sqlDatabaseName string = 'azurequizlab-db'
 ])
 param sqlEdition string = 'Basic'
 
+
+@description('Aad Admin Login')
+param aadAdminLogin string
+
+@description('Aad Admin Object Id')
+param aadAdminObjectId string
+
 // Variables
 var sqlServerName = 'sqlsrv-${sqlDatabaseName}'
 
@@ -41,6 +47,12 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01' = {
     version: '12.0'
     minimalTlsVersion: '1.2'
     publicNetworkAccess: 'Enabled'
+    administrators: {
+      login: aadAdminLogin
+      sid: aadAdminObjectId
+      tenantId: subscription().tenantId
+      principalType: 'User'
+    }
   }
 }
 

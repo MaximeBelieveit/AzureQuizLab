@@ -48,6 +48,12 @@ param tags object = {
 @minLength(8)
 param sqlAdminPassword string
 
+@description('Aad Admin Login')
+param aadAdminLogin string
+
+@description('Aad Admin Object Id')
+param aadAdminObjectId string
+
 // Naming convention
 var sqlDatabaseName = '${appName}-db-${environment}'
 var sqlAdminUsername = 'dbserveradmin'
@@ -61,6 +67,8 @@ module storage 'storage.bicep' = {
     sqlAdminUsername: sqlAdminUsername
     sqlAdminPassword: sqlAdminPassword
     sqlDatabaseName: sqlDatabaseName
+    aadAdminLogin: aadAdminLogin
+    aadAdminObjectId: aadAdminObjectId
     sqlEdition: 'Basic'
   }
 }

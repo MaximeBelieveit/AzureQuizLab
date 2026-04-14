@@ -19,6 +19,12 @@
     },
     "instanceCount": {
       "value": 1
+    },
+    "aadAdminLogin": {
+      "value": "maxime@sybarisclassroom.onmicrosoft.com"
+    },
+    "aadAdminObjectId": {
+      "value": "e6952c8e-1f4a-4304-a4d6-b2b171a4aa47"
     }
   }
 }
