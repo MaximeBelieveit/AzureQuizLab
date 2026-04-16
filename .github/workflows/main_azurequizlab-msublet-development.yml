@@ -52,4 +52,4 @@ jobs:
           app-name: 'AzureQuizLab-msublet-Development'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6F3488A53E2249A88AE1E648A7D53A5D }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2D447465CE5C4998ADE7A256B4BB46DA }}
