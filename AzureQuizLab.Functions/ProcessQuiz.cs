@@ -1,4 +1,3 @@
-using System;
 using Azure.Storage.Queues.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Data.SqlClient;
