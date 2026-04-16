@@ -5,7 +5,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-namespace AzureQuizLab.Function;
+namespace AzureQuizLab.Functions;
 
 public class SubmitQuiz
 {

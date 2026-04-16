@@ -4,7 +4,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 
-namespace AzureQuizLab.Function;
+namespace AzureQuizLab.Functions;
 
 public class ProcessQuiz
 {
