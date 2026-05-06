@@ -13,6 +13,9 @@ param appName string = 'azurequizlab'
 @description('Nom du service plan')
 param appServicePlanName string = 'asp-${appName}'
 
+@description('Azure Function Name')
+param functionAppName string = ''
+
 @description('SKU du service plan')
 @allowed([
   'F1' // Free
@@ -38,15 +41,15 @@ param linuxFxVersion string = 'DOTNETCORE|10.0'
 @allowed([1])
 param instanceCount int = 1
 
+@description('SQL Server admin password')
+@minLength(8)
+param sqlAdminPassword string
+
 @description('Tags à appliquer sur les ressources')
 param tags object = {
   env: 'formation'
   owner: 'msublet'
 }
-
-@description('SQL Server admin password')
-@minLength(8)
-param sqlAdminPassword string
 
 @description('Aad Admin Login')
 param aadAdminLogin string
@@ -73,6 +76,8 @@ module storage 'storage.bicep' = {
   }
 }
 
+var sqlConnectionString = 'Server=tcp:${storage.outputs.sqlServerFullyQualifiedDomainName},1433;Initial Catalog=${storage.outputs.sqlDatabaseName};Persist Security Info=False;User ID=${sqlAdminUsername};Password=${sqlAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+
 // Web App module
 module webApp 'webApp.bicep' = {
   name: 'webApp-deployment'
@@ -85,7 +90,18 @@ module webApp 'webApp.bicep' = {
     linuxFxVersion: linuxFxVersion
     instanceCount: instanceCount
     tags: tags
-    connectionString: 'Server=tcp:${storage.outputs.sqlServerFullyQualifiedDomainName},1433;Initial Catalog=${storage.outputs.sqlDatabaseName};Persist Security Info=False;User ID=${sqlAdminUsername};Password=${sqlAdminPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+    connectionString: sqlConnectionString
+  }
+}
+
+// Azure Function module
+module azureFunction 'azureFunction.bicep' = {
+  params: {
+    location: location
+    environment: environment
+    functionName: functionAppName
+    sqlConnectionString: sqlConnectionString
+    tags: tags
   }
 }
 
@@ -96,3 +112,6 @@ output appServicePlanName string = webApp.outputs.appServicePlanName
 output sqlServerName string = storage.outputs.sqlServerName
 output sqlServerFqdn string = storage.outputs.sqlServerFullyQualifiedDomainName
 output sqlDatabaseName string = storage.outputs.sqlDatabaseName
+output functionAppUrl string = azureFunction.outputs.functionAppUrl
+output functionAppName string = azureFunction.outputs.functionAppName
+output functionAppStorageAccountName string = azureFunction.outputs.storageAccountName

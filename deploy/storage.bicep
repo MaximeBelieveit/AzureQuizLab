@@ -83,7 +83,6 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2023-08-01' = {
     zoneRedundant: false
   }
 }
-
 // Outputs
 output sqlServerName string = sqlServer.name
 output sqlServerFullyQualifiedDomainName string = sqlServer.properties.fullyQualifiedDomainName
