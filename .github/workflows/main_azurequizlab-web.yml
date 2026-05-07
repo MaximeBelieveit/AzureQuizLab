@@ -40,13 +40,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -54,4 +54,4 @@ jobs:
           app-name: 'AzureQuizLab-msublet-Development'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2D447465CE5C4998ADE7A256B4BB46DA }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7C98A94A32D94A0D831F1009264F5AA2 }}
