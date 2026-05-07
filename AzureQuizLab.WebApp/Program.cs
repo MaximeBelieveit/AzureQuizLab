@@ -1,19 +1,24 @@
 using AzureQuizLab.Models;
 using AzureQuizLab.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddMemoryCache();
 builder.Services.AddRazorPages();
 
 builder.Services.Configure<MaintenanceOptions>(builder.Configuration.GetSection(MaintenanceOptions.SectionName));
+builder.Services.Configure<DataBaseOptions>(builder.Configuration.GetSection(DataBaseOptions.SectionName));
 
-builder.Services.AddDbContext<QuizDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        sqlOptions => sqlOptions.EnableRetryOnFailure()
-    ));
+builder.Services.AddDbContext<QuizDbContext>((serviceProvider, options) =>
+{
+    var dbOptions = serviceProvider.GetRequiredService<IOptions<DataBaseOptions>>().Value;
+
+    options.UseSqlServer(dbOptions.ConnectionString, 
+        sqlOptions => sqlOptions.EnableRetryOnFailure());
+});
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

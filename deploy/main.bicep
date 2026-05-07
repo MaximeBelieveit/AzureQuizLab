@@ -95,15 +95,15 @@ module webApp 'webApp.bicep' = {
 }
 
 // Azure Function module
-module azureFunction 'azureFunction.bicep' = {
-  params: {
-    location: location
-    environment: environment
-    functionName: functionAppName
-    sqlConnectionString: sqlConnectionString
-    tags: tags
-  }
-}
+// module azureFunction 'azureFunction.bicep' = {
+//   params: {
+//     location: location
+//     environment: environment
+//     functionName: functionAppName
+//     sqlConnectionString: sqlConnectionString
+//     tags: tags
+//   }
+// }
 
 // Outputs
 output webAppUrl string = webApp.outputs.webAppUrl
@@ -112,6 +112,6 @@ output appServicePlanName string = webApp.outputs.appServicePlanName
 output sqlServerName string = storage.outputs.sqlServerName
 output sqlServerFqdn string = storage.outputs.sqlServerFullyQualifiedDomainName
 output sqlDatabaseName string = storage.outputs.sqlDatabaseName
-output functionAppUrl string = azureFunction.outputs.functionAppUrl
-output functionAppName string = azureFunction.outputs.functionAppName
-output functionAppStorageAccountName string = azureFunction.outputs.storageAccountName
+// output functionAppUrl string = azureFunction.outputs.functionAppUrl
+// output functionAppName string = azureFunction.outputs.functionAppName
+// output functionAppStorageAccountName string = azureFunction.outputs.storageAccountName

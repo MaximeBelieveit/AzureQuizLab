@@ -4,6 +4,7 @@ param location string = resourceGroup().location
 @description('Environment name')
 param environment string
 
+@minLength(3)
 @description('Application name')
 param functionName string
 
@@ -63,13 +64,13 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
     family: 'Y'
     capacity: 0
   }
-  kind: 'functionapp'
+  kind: 'functionapp,linux'
   properties: {
     perSiteScaling: false
     elasticScaleEnabled: false
     maximumElasticWorkerCount: 1
     isSpot: false
-    reserved: false
+    reserved: true
     isXenon: false
     hyperV: false
     targetWorkerCount: 0
@@ -83,7 +84,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
 resource functionApp 'Microsoft.Web/sites@2024-11-01' = {
   name: functionAppName
   location: location
-  kind: 'functionapp'
+  kind: 'functionapp,linux'
   identity: {
     type: 'SystemAssigned'
   }
@@ -92,7 +93,7 @@ resource functionApp 'Microsoft.Web/sites@2024-11-01' = {
     serverFarmId: appServicePlan.id
     siteConfig: {
       use32BitWorkerProcess: false
-      linuxFxVersion: 'DOTNETCORE|10.0'
+      linuxFxVersion: 'DOTNET-ISOLATED|10.0'
       appSettings: [
         {
           name: 'AzureWebJobsStorage'
