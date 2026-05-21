@@ -31,7 +31,7 @@ else
 
 builder.Services.AddScoped<BlobService>();
 
-builder.Logging.ClearProviders();
+//builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddAzureWebAppDiagnostics();
 
