@@ -19,7 +19,7 @@ public class BlobStorageModel : PageModel
     [BindProperty]
     public string? SelectedFile { get; set; }
 
-    public string? Content { get; set; }
+    public string? FileContent { get; set; }
 
     public async Task OnGetAsync()
     {
@@ -46,11 +46,11 @@ public class BlobStorageModel : PageModel
 
         if (string.IsNullOrWhiteSpace(SelectedFile))
         {
-            Content = "Aucun fichier sélectionné.";
+            FileContent = "Aucun fichier sélectionné.";
             return Page();
         }
 
-        Content = await _blobService.DownloadAsync(SelectedFile);
+        FileContent = await _blobService.DownloadAsync(SelectedFile);
         return Page();
     }
 }
