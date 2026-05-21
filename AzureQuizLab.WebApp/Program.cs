@@ -1,5 +1,8 @@
+using Azure.Core;
+using Azure.Identity;
 using AzureQuizLab.Models;
 using AzureQuizLab.Options;
+using AzureQuizLab.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -11,14 +14,22 @@ builder.Services.AddRazorPages();
 
 builder.Services.Configure<MaintenanceOptions>(builder.Configuration.GetSection(MaintenanceOptions.SectionName));
 builder.Services.Configure<DataBaseOptions>(builder.Configuration.GetSection(DataBaseOptions.SectionName));
+builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection(StorageOptions.SectionName));
 
 builder.Services.AddDbContext<QuizDbContext>((serviceProvider, options) =>
 {
     var dbOptions = serviceProvider.GetRequiredService<IOptions<DataBaseOptions>>().Value;
 
-    options.UseSqlServer(dbOptions.ConnectionString, 
+    options.UseSqlServer(dbOptions.ConnectionString,
         sqlOptions => sqlOptions.EnableRetryOnFailure());
 });
+
+if (builder.Environment.IsDevelopment())
+    builder.Services.AddSingleton<TokenCredential>(new AzureCliCredential());
+else
+    builder.Services.AddSingleton<TokenCredential>(new ManagedIdentityCredential(new ManagedIdentityCredentialOptions()));
+
+builder.Services.AddScoped<BlobService>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
