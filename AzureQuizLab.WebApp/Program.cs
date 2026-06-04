@@ -15,6 +15,7 @@ builder.Services.AddRazorPages();
 builder.Services.Configure<MaintenanceOptions>(builder.Configuration.GetSection(MaintenanceOptions.SectionName));
 builder.Services.Configure<DataBaseOptions>(builder.Configuration.GetSection(DataBaseOptions.SectionName));
 builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection(StorageOptions.SectionName));
+builder.Services.Configure<CosmosOptions>(builder.Configuration.GetSection(CosmosOptions.SectionName));
 
 builder.Services.AddDbContext<QuizDbContext>((serviceProvider, options) =>
 {

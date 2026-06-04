@@ -1,0 +1,21 @@
+﻿@page
+@model AzureQuizLab.Pages.CosmosScoresModel
+<h2>Classement Cosmos DB</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Utilisateur</th>
+            <th>Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var score in Model.Scores)
+        {
+            <tr>
+                <td>@score.UserId</td>
+                <td>@score.Score</td>
+            </tr>
+        }
+    </tbody>
+</table>
